@@ -1,0 +1,32 @@
+<!--   -->
+<launch>
+
+<!--cloud parted parameters -->
+	<param name="slope" value="0.1"/>
+	<param name="widthOfRalatedRegion" value="8.0"/>
+	<param name="distanceOfDetection" value="20.0"/>
+	<param name="radiusOfUnrelatedRegion" value="0.5"/>
+	<param name="thresholdOfheight" value="-0.0"/>
+	
+<!--obstacle cluster parameters -->
+	<param name="cluster_search_radius" value="0.21"/>
+
+
+<!--steer creater parameters -->
+	<param name="yawErrToSteerAngle_Kp" value="10.0"/>
+	
+
+<!--lower_control parameters -->
+	<param name="port_name" value="/dev/ttyS0"/>
+
+
+	
+	<node name="parted" pkg="formular" type="parted" output="screen"/>
+	
+	<node name="clustered" pkg="formular" type="clustered" output="screen"/>
+	
+	<node name="steer" pkg="formular" type="steer"/>
+	
+	<node name="lower_control_node" pkg="temp_pkg" type="lower_control_node" output="screen"/>
+
+</launch>

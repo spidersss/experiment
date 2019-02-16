@@ -4,7 +4,7 @@ PointCloud space_part_height(PointCloud cloud)
 	sensor_msgs::PointCloud2 output;
 	PointCloud cloud_filtered;
 	//std::cout<<cloud.points.size()<<std::endl;
-	std::vector<pcl::PointXYZ, Eigen::aligned_allocator_indirection<pcl::PointXYZ> >::iterator it;
+	std::vector<pcl::PointXYZRGB, Eigen::aligned_allocator_indirection<pcl::PointXYZRGB> >::iterator it;
 	for(it = cloud.points.begin(); it != cloud.points.end(); it++)
 	{	
 		

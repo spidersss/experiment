@@ -29,7 +29,7 @@
 #ifndef M_PI
 #define M_PI 3.1415926
 #endif
-typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;  
+typedef pcl::PointCloud<pcl::PointXYZRGB> PointCloud;  
 PointCloud space_part(PointCloud cloud, double x_distance, double y_distance, double z_distance);
 //PointCloud space_part(PointCloud cloud, double slope);
 PointCloud outlier_filter(PointCloud cloud, int MeanK, double Thresh);
@@ -44,7 +44,7 @@ std::vector<double> zCreator(PointCloud cloud, double x_distance, double y_dista
 	std::vector<double> heightMin;
 	for(int i = 0; i < 40; i++) heightMax.push_back(-1.0);
 	for(int i = 0; i < 40; i++) heightMin.push_back(1.0);
-	std::vector<pcl::PointXYZ, Eigen::aligned_allocator_indirection<pcl::PointXYZ> >::iterator it;
+	std::vector<pcl::PointXYZRGB, Eigen::aligned_allocator_indirection<pcl::PointXYZRGB> >::iterator it;
 	for(it = cloud.points.begin(); it != cloud.points.end(); it++)
 	{	
 		
@@ -75,22 +75,12 @@ std::vector<double> zCreator(PointCloud cloud, double x_distance, double y_dista
 	
 	return heightMax;
 }
-
+/*
 PointCloud space_part(PointCloud cloud, double slope,double widthOfRalatedRegion,double distanceOfDetection,double radiusOfUnrelatedRegion,double thresholdOfheight)
-//PointCloud space_part(PointCloud cloud, double slope)///上坡，下坡保证有锥筒即可
-/******     slop代表斜率阈值               ***********/
 {
 	sensor_msgs::PointCloud2 output;
 	PointCloud cloud_filtered;
-	//std::cout<<cloud.points.size()<<std::endl;
-	//std::vector<pcl::PointXYZ, Eigen::aligned_allocator_indirection<pcl::PointXYZ> >::iterator it;
-	/*for(it = cloud.points.begin(); it != cloud.points.end(); it++)
-	{	
-		if((it->z*it->z/(it->y*it->y+it->x*it->x))>slope){///利用点云到原点的斜率，椎筒点云更大
-			cloud_filtered.points.push_back (*it);
-		}
-		
-	}*/
+
 	
 	for(int i = 1; i < cloud.points.size(); i++)
 	{	
@@ -101,14 +91,11 @@ PointCloud space_part(PointCloud cloud, double slope,double widthOfRalatedRegion
 		double y2 = cloud.points[i].y - cloud.points[i-1].y;
 		double x2 = cloud.points[i].x - cloud.points[i-1].x;
 		
-/***********************************************************/
 		if(y > -widthOfRalatedRegion/2 && y < widthOfRalatedRegion/2 && 
 			x > 0 && x < distanceOfDetection && 
 			z > thresholdOfheight && z < 1.5 &&  
 			(x*x + y*y) > radiusOfUnrelatedRegion*radiusOfUnrelatedRegion && 
-			x !=NAN && y  != NAN && z != NAN ){///检测斜率，椎捅斜率比路面大得多//高度肯定高于地面的点云留
-/**********   x为相关区域宽度，y为前后长度。z为高度阈值 *****/
-
+			x !=NAN && y  != NAN && z != NAN ){
 			cloud_filtered.points.push_back (cloud.points[i]);
 		}
 		
@@ -117,18 +104,55 @@ PointCloud space_part(PointCloud cloud, double slope,double widthOfRalatedRegion
 	cloud_filtered.width = cloud_filtered.points.size ();
   	cloud_filtered.height = 1;
   	cloud_filtered.is_dense = false;
-	//std::cout<<cloud_filtered.points.size()<<std::endl;
 	
 	return cloud_filtered;
 }
+*/
 
+PointCloud space_part(PointCloud cloud, double slope,double widthOfRalatedRegion,double distanceOfDetection,double radiusOfUnrelatedRegion,double thresholdOfheight)
+{
+	for(int i = 1; i < cloud.points.size(); i++)
+	{	
+		double z = cloud.points[i].z;
+		double y = cloud.points[i].y;
+		double x = cloud.points[i].x;
+		
+		if(y > -widthOfRalatedRegion/2 && y < widthOfRalatedRegion/2 && x < distanceOfDetection &&  (x*x + y*y) > radiusOfUnrelatedRegion*radiusOfUnrelatedRegion){
+			if(z > thresholdOfheight){ 
+				if (z < 1.5 ){
+					cloud.points[i].r = 255;
+					cloud.points[i].g = 0;
+					cloud.points[i].b = 0;
+				}
+				else{
+					cloud.points[i].r = 0;
+					cloud.points[i].g = 255;
+					cloud.points[i].b = 0;
+				}
+			}
+			else{
+				cloud.points[i].r = 0;
+				cloud.points[i].g = 0;
+				cloud.points[i].b = 0;
+			}
+		}
+		else{
+			cloud.points[i].r = 192;
+			cloud.points[i].g = 192;
+			cloud.points[i].b = 192;
+		}
+		
+	}
+	
+	return cloud;
+}
 
 PointCloud space_part(PointCloud cloud, double x_distance, double y_distance, std::vector<double> z_distance)
 {
 	sensor_msgs::PointCloud2 output;
 	PointCloud cloud_filtered;
 	//std::cout<<cloud.points.size()<<std::endl;
-	std::vector<pcl::PointXYZ, Eigen::aligned_allocator_indirection<pcl::PointXYZ> >::iterator it;
+	std::vector<pcl::PointXYZRGB, Eigen::aligned_allocator_indirection<pcl::PointXYZRGB> >::iterator it;
 	for(it = cloud.points.begin(); it != cloud.points.end(); it++)
 	{	
 		if(it->x > (-1.0 * x_distance) && it->x < x_distance && it->y < 0 && it->y > y_distance && it->z < 1 && it->x !=NAN && it->y  != NAN && it->z != NAN){
@@ -155,7 +179,7 @@ PointCloud space_part(PointCloud cloud, double x_distance, double y_distance, st
 PointCloud outlier_filter(PointCloud cloud, int MeanK, double Thresh)
 {
 	PointCloud cloud_filtered;
-	pcl::StatisticalOutlierRemoval<pcl::PointXYZ> statFilter;
+	pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> statFilter;
 	statFilter.setInputCloud(cloud.makeShared());
 	statFilter.setMeanK(MeanK);
 	statFilter.setStddevMulThresh(Thresh);
@@ -167,14 +191,14 @@ PointCloud center_cluster(PointCloud cloud, double Tolerance, int MinSize, int M
 {
 	//PointCloud cloud_cluster;//存储每个类
 	PointCloud cloud_center;// 存储每个类的质心
-	pcl::PointXYZ point_center;//存储质心
+	pcl::PointXYZRGB point_center;//存储质心
 	
   	// 创建用于提取搜索方法的kdtree树对象
- 	pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new 		pcl::search::KdTree<pcl::PointXYZ>);
+ 	pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree (new 		pcl::search::KdTree<pcl::PointXYZRGB>);
   	tree->setInputCloud (cloud.makeShared());
 
   	std::vector<pcl::PointIndices> cluster_indices;
-  	pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;   //欧式聚类对象
+  	pcl::EuclideanClusterExtraction<pcl::PointXYZRGB> ec;   //欧式聚类对象
   	ec.setClusterTolerance (Tolerance);                     // 设置近邻搜索的搜索半径为0.2m
   	ec.setMinClusterSize (MinSize);                 //设置一个聚类需要的最少的点数目为5
   	ec.setMaxClusterSize (MaxSize);               //设置一个聚类需要的最大点数目为2500
@@ -245,7 +269,7 @@ double steerCreator(PointCloud cloud)
 	int left = -1;
 	int right = -1;
 	//if(cloud.points.size()<2 || ((cloud.points[0].x*cloud.points[0].x +cloud.points[0].y*cloud.points[0].y) > 100.0)) return 10000.;
-	std::vector<pcl::PointXYZ, Eigen::aligned_allocator_indirection<pcl::PointXYZ> >::iterator iter;
+	std::vector<pcl::PointXYZRGB, Eigen::aligned_allocator_indirection<pcl::PointXYZRGB> >::iterator iter;
 	for(iter = cloud.points.begin(); iter != cloud.points.end(); iter++){
 		std::cout<<"x:"<<iter->x<<"\t"<<"y:"<<iter->y<<std::endl;
 	}

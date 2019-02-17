@@ -218,3 +218,7 @@ add_dependencies(parted ${catkin_EXPORTED_TARGETS})
 add_executable(clustered src/clustered.cc)
 target_link_libraries(clustered ${catkin_LIBRARIES})
 add_dependencies(clustered ${catkin_EXPORTED_TARGETS})
+
+add_executable(transfer src/transfer.cc)
+target_link_libraries(transfer ${catkin_LIBRARIES})
+add_dependencies(transfer ${catkin_EXPORTED_TARGETS})

@@ -34,6 +34,7 @@ PointCloud space_part(PointCloud cloud, double x_distance, double y_distance, do
 //PointCloud space_part(PointCloud cloud, double slope);
 PointCloud outlier_filter(PointCloud cloud, int MeanK, double Thresh);
 PointCloud cloud_transfer(PointCloud cloud);
+PointCloud cloud_filter(PointCloud cloud);
 PointCloud center_cluster(PointCloud cloud, double Tolerance, int MinSize, int MaxSize);
 double steerCreator(PointCloud cloud);
 std::vector<double> zCreator(PointCloud cloud, double x_distance, double y_distance);
@@ -206,6 +207,52 @@ PointCloud cloud_transfer(PointCloud cloud)
 	
 	return cloud_complete;
 }
+
+PointCloud cloud_filter(PointCloud cloud)
+{
+	PointCloud cloud_complete;
+	for(int i = 1; i < cloud.points.size(); i++)
+	{	
+		double z = cloud.points[i].z;
+		double y = cloud.points[i].y;
+		double x = cloud.points[i].x;
+		cloud.points[i].y = z - 10;
+		cloud.points[i].z = y;
+		cloud.points[i].x = -1 * x;
+		
+		z = cloud.points[i].z;
+		y = cloud.points[i].y;
+		x = cloud.points[i].x;
+		if( y > 0 && y < 77){
+			if((y < -16.7 * x + 50.6398 && y > -16.7 * x - 100.6398) || (y < -16.7 * x + 100.6398 && y > -16.7 * x + 49.6398 && y < 21.06 * z - 20.98)){
+				if(y > 21.06 * z + 5.98){ 				
+						cloud.points[i].r = 85;
+						cloud.points[i].g = 102;
+						cloud.points[i].b = 0;
+				}
+				else if(y < 21.06 * z - 20.98){
+					cloud.points[i].r = 0;
+					cloud.points[i].g = 255;
+					cloud.points[i].b = 0;
+				}
+				else{
+					cloud.points[i].r = 0;
+					cloud.points[i].g = 0;
+					cloud.points[i].b = 255;
+					cloud_complete.points.push_back (cloud.points[i]);
+				}
+			}
+		}		
+	}
+	
+	cloud_complete.header = cloud.header;
+	cloud_complete.width = cloud_complete.points.size ();
+  	cloud_complete.height = 1;
+  	cloud_complete.is_dense = false;
+	
+	return cloud_complete;
+}
+
 
 PointCloud space_part(PointCloud cloud, double x_distance, double y_distance, std::vector<double> z_distance)
 {

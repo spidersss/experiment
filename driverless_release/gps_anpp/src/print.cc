@@ -3,8 +3,7 @@ ros::Subscriber gps_sub;
 
 void gpsCallback(const gps_anpp::gps_data::ConstPtr& gps_msg)
 {
-	
-	printf("%.8f,%.8f\n", gps_msg->lat, gps_msg->lon);
+	if(gps_msg->lat > 30.0)	printf("%.8f,%.8f\n", gps_msg->lat + 0.000145, gps_msg->lon - 0.000356);
 }
 
 int main(int argc, char **argv)

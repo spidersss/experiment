@@ -226,3 +226,7 @@ add_dependencies(transfer ${catkin_EXPORTED_TARGETS})
 add_executable(filter src/filter.cc)
 target_link_libraries(filter ${catkin_LIBRARIES})
 add_dependencies(filter ${catkin_EXPORTED_TARGETS})
+
+add_executable(pcdviewer src/pcdviewer.cc)
+target_link_libraries(pcdviewer ${catkin_LIBRARIES})
+add_dependencies(pcdviewer ${catkin_EXPORTED_TARGETS})

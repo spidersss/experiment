@@ -140,18 +140,21 @@ add_executable(gps_anpp src/gps_anpp.cc src/input.cc src/rawdata.cc)
 add_executable(gps_trajectory src/trajectory.cc)
 add_executable(gps_utilities src/utilities.cc src/input.cc)
 add_executable(gps_print src/print.cc)
+add_executable(turtle_print src/turtle_print.cc)
 
 add_dependencies(gps_record ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(gps_anpp ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(gps_trajectory ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(gps_utilities ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(gps_print ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(turtle_print ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 target_link_libraries(gps_record ${catkin_LIBRARIES})
 target_link_libraries(gps_anpp ${catkin_LIBRARIES})
 target_link_libraries(gps_trajectory ${catkin_LIBRARIES})
 target_link_libraries(gps_utilities ${catkin_LIBRARIES})
 target_link_libraries(gps_print ${catkin_LIBRARIES})
+target_link_libraries(turtle_print ${catkin_LIBRARIES})
 
 #############
 ## Install ##

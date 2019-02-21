@@ -58,15 +58,9 @@ public:
 	pathHandler()
 	{	
 		sub_point = n.subscribe("cluster_points", 10, &pathHandler::path_cb, this);
-		sub_steer = n.subscribe("lidar_steer", 10, &pathHandler::steer_cb, this);
 		path_pub = n.advertise<nav_msgs::Path>("trajectory",1, true);
-		steer_sub = 0.0;
 	}
-	void steer_cb(const std_msgs::Float64 &steer_msg)
-	{
-		steer_sub = steer_msg.data;
-	
-	}
+
 	void path_cb(const sensor_msgs::PointCloud2 &cloud_msg)
 	{
 		PointCloud cloud_center;
@@ -138,9 +132,8 @@ public:
 		for(int i = 0; i < len - 1; i ++){
 			x = cloud_center.points[i].x;
 			y = cloud_center.points[i].y;
-			cout<<"steer_sub"<<steer_sub<<endl;
 			if( (x*x + y*y) > 100.0) continue; 
-			if( x * tan((steer_sub +270.0) / 180.0 * 3.1415982 )> y){
+			if( cloud_center.points[i].y > 0){
   				x = cloud_center.points[i].x;
 				y = cloud_center.points[i].y;
 				cout<<'a'<<x<<y<<endl;
@@ -162,7 +155,7 @@ public:
 		//**最终路径绘制**rviz 版本//
 		nav_msgs::Path path; //nav_msgs::Path path; 
 		path.header.stamp=cloud_msg.header.stamp; 
-		path.header.frame_id="pandar"; 
+		path.header.frame_id="velodyne"; 
 		path.poses.clear();
 	
 		vector<Point> target_point;
@@ -196,7 +189,7 @@ public:
 				this_pose_stamped.pose.orientation = path.poses[i-1].pose.orientation;	
 			}
 			this_pose_stamped.header.stamp=ros::Time::now(); 
-			this_pose_stamped.header.frame_id="pandar"; 
+			this_pose_stamped.header.frame_id="velodyne"; 
 			path.poses.push_back(this_pose_stamped); 
 		
 		}
@@ -221,7 +214,7 @@ public:
 		}
 		nav_msgs::Path path; //nav_msgs::Path path; 
 		path.header.stamp=cloud_msg.header.stamp; 
-		path.header.frame_id="pandar"; 
+		path.header.frame_id="velodyne"; 
 		path.poses.clear();
 		geometry_msgs::PoseStamped this_pose_stamped; 
 		geometry_msgs::Quaternion goal_quat;
@@ -234,7 +227,7 @@ public:
 		this_pose_stamped.pose.orientation.z = goal_quat.z; 
 		this_pose_stamped.pose.orientation.w = goal_quat.w; 
 		this_pose_stamped.header.stamp=ros::Time::now(); 
-		this_pose_stamped.header.frame_id="pandar"; 
+		this_pose_stamped.header.frame_id="velodyne"; 
 		path.poses.push_back(this_pose_stamped); 
 	
 		srand((unsigned)time(NULL));
@@ -247,7 +240,7 @@ public:
 		this_pose_stamped.pose.orientation.z = goal_quat.z; 
 		this_pose_stamped.pose.orientation.w = goal_quat.w; 
 		this_pose_stamped.header.stamp=ros::Time::now(); 
-		this_pose_stamped.header.frame_id="pandar"; 
+		this_pose_stamped.header.frame_id="velodyne"; 
 		path.poses.push_back(this_pose_stamped); 
 	*/
 	
@@ -261,10 +254,8 @@ public:
 private:
 	ros::NodeHandle n;
 	ros::Subscriber sub_point;
-	ros::Subscriber sub_steer;
 	//pub_steer = n.advertise<std_msgs::Float64> ("formular_steer", 10);
 	ros::Publisher path_pub;
-	double steer_sub;
 };
 
 

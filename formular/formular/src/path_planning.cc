@@ -220,7 +220,7 @@ void cloud_cb(const sensor_msgs::PointCloud2 &cloud_msg)
 	//**最终路径绘制**rviz 版本//
 	nav_msgs::Path path; //nav_msgs::Path path; 
 	path.header.stamp=cloud_msg.header.stamp; 
-	path.header.frame_id="pandar"; 
+	path.header.frame_id="velodyne"; 
 	path.poses.clear();
 	geometry_msgs::PoseStamped this_pose_stamped; 
 	geometry_msgs::Quaternion goal_quat;
@@ -241,7 +241,7 @@ void cloud_cb(const sensor_msgs::PointCloud2 &cloud_msg)
 			this_pose_stamped.pose.orientation = path.poses[i-1].pose.orientation;	
 		}
 		this_pose_stamped.header.stamp=ros::Time::now(); 
-		this_pose_stamped.header.frame_id="pandar"; 
+		this_pose_stamped.header.frame_id="velodyne"; 
 		path.poses.push_back(this_pose_stamped); 
 		
 	}

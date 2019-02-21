@@ -234,3 +234,11 @@ add_dependencies(pcdviewer ${catkin_EXPORTED_TARGETS})
 add_executable(detected src/detected.cc)
 target_link_libraries(detected ${catkin_LIBRARIES})
 add_dependencies(detected ${catkin_EXPORTED_TARGETS})
+
+add_executable(path src/path.cc)
+target_link_libraries(path ${catkin_LIBRARIES})
+add_dependencies(path ${catkin_EXPORTED_TARGETS})
+
+add_executable(path_planning src/path_planning.cc)
+target_link_libraries(path_planning ${catkin_LIBRARIES})
+add_dependencies(path_planning ${catkin_EXPORTED_TARGETS})

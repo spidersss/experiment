@@ -30,10 +30,12 @@
 #define M_PI 3.1415926
 #endif
 typedef pcl::PointCloud<pcl::PointXYZRGB> PointCloud;  
-PointCloud space_part(PointCloud cloud, double x_distance, double y_distance, double z_distance);
+PointCloud space_detected(PointCloud cloud, double x_distance, double y_distance, double z_distance);
 //PointCloud space_part(PointCloud cloud, double slope);
+PointCloud space_detected(PointCloud cloud, double slope,double widthOfRalatedRegion,double distanceOfDetection,double radiusOfUnrelatedRegion,double thresholdOfheight);
 PointCloud outlier_filter(PointCloud cloud, int MeanK, double Thresh);
 PointCloud cloud_transfer(PointCloud cloud);
+PointCloud space_parted(PointCloud cloud);
 PointCloud cloud_filter(PointCloud cloud);
 PointCloud center_cluster(PointCloud cloud, double Tolerance, int MinSize, int MaxSize);
 double steerCreator(PointCloud cloud);
@@ -111,7 +113,7 @@ PointCloud space_part(PointCloud cloud, double slope,double widthOfRalatedRegion
 }
 */
 
-PointCloud space_part(PointCloud cloud, double slope,double widthOfRalatedRegion,double distanceOfDetection,double radiusOfUnrelatedRegion,double thresholdOfheight)
+PointCloud space_detected(PointCloud cloud, double slope,double widthOfRalatedRegion,double distanceOfDetection,double radiusOfUnrelatedRegion,double thresholdOfheight)
 {
 	PointCloud cloud_filtered;
 	for(int i = 1; i < cloud.points.size(); i++)
@@ -146,6 +148,27 @@ PointCloud space_part(PointCloud cloud, double slope,double widthOfRalatedRegion
 		}
 		
 		cloud_filtered.points.push_back (cloud.points[i]);
+		
+	}
+	
+	cloud_filtered.header = cloud.header;
+	cloud_filtered.width = cloud_filtered.points.size ();
+  	cloud_filtered.height = 1;
+  	cloud_filtered.is_dense = false;
+	
+	return cloud_filtered;
+}
+
+PointCloud space_part(PointCloud cloud)
+{
+	PointCloud cloud_filtered;
+	for(int i = 1; i < cloud.points.size(); i++)
+	{	
+		double z = cloud.points[i].z;
+		double y = cloud.points[i].y;
+		double x = cloud.points[i].x;
+		
+		if(cloud.points[i].b == 255 && cloud.points[i].r == 0) cloud_filtered.points.push_back (cloud.points[i]);
 		
 	}
 	
@@ -254,7 +277,7 @@ PointCloud cloud_filter(PointCloud cloud)
 }
 
 
-PointCloud space_part(PointCloud cloud, double x_distance, double y_distance, std::vector<double> z_distance)
+PointCloud space_detected(PointCloud cloud, double x_distance, double y_distance, std::vector<double> z_distance)
 {
 	sensor_msgs::PointCloud2 output;
 	PointCloud cloud_filtered;

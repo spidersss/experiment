@@ -4,14 +4,8 @@ class cloudHandler
 public:
 	cloudHandler()
 	{
-		sub = n.subscribe("velodyne_points", 10,  &cloudHandler::cloud_cb, this);
+		sub = n.subscribe("detected_points", 10,  &cloudHandler::cloud_cb, this);
 		pubxyz = n.advertise<sensor_msgs::PointCloud2> ("parted_points", 10);
-		n.param<double>("slope",slope,0.1);
-		n.param<double>("widthOfRalatedRegion",widthOfRalatedRegion,8.0);
-		n.param<double>("distanceOfDetection",distanceOfDetection,60.0);
-		n.param<double>("radiusOfUnrelatedRegion",radiusOfUnrelatedRegion,1.0);
-		n.param<double>("thresholdOfheight",thresholdOfheight,-0.3);
-		//ROS_INFO("slope=%f",slope);
 	}
 	
 	void cloud_cb(const sensor_msgs::PointCloud2 &cloud_msg)
@@ -21,7 +15,7 @@ public:
 		
 		PointCloud cloud_parted;
 /*********************/
-		cloud_parted = space_part(cloud_init, slope,widthOfRalatedRegion,distanceOfDetection,radiusOfUnrelatedRegion,thresholdOfheight);
+		cloud_parted = space_part(cloud_init);
 /*******************the second parameter is slope*/
 		sensor_msgs::PointCloud2 output;
 		pcl::toROSMsg(cloud_parted, output);

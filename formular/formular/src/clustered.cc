@@ -21,7 +21,7 @@ int main(int argc, char** argv)
 {
 	ros::init (argc, argv, "clustered");
 	ros::NodeHandle n;
-	n.param<float>("cluster_search_radius",cluster_search_radius,0.2);
+	n.param<float>("cluster_search_radius",cluster_search_radius,1.0);
 	//ROS_INFO("%f",cluster_search_radius);
 	
 	ros::Subscriber sub = n.subscribe("parted_points", 10, cloud_cb);

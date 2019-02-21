@@ -123,9 +123,9 @@ PointCloud space_part(PointCloud cloud, double slope,double widthOfRalatedRegion
 		if(y > -widthOfRalatedRegion/2 && y < widthOfRalatedRegion/2 && x < distanceOfDetection &&  (x*x + y*y) > radiusOfUnrelatedRegion*radiusOfUnrelatedRegion){
 			if(z > thresholdOfheight){ 
 				if (z < 1.5 ){
-					cloud.points[i].r = 255;
+					cloud.points[i].r = 0;
 					cloud.points[i].g = 0;
-					cloud.points[i].b = 0;
+					cloud.points[i].b = 255;
 				}
 				else{
 					cloud.points[i].r = 0;
@@ -134,15 +134,15 @@ PointCloud space_part(PointCloud cloud, double slope,double widthOfRalatedRegion
 				}
 			}
 			else{
-				cloud.points[i].r = 0;
-				cloud.points[i].g = 0;
+				cloud.points[i].r = 85;
+				cloud.points[i].g = 102;
 				cloud.points[i].b = 0;
 			}
 		}
 		else{
-			cloud.points[i].r = 192;
-			cloud.points[i].g = 192;
-			cloud.points[i].b = 192;
+			cloud.points[i].r = 255;
+			cloud.points[i].g = 255;
+			cloud.points[i].b = 255;
 		}
 		
 		cloud_filtered.points.push_back (cloud.points[i]);
